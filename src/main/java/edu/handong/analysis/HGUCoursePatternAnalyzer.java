@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
 import edu.handong.analysise.utils.NotEnoughArgumentException;
 import edu.handong.analysise.utils.Utils;
-
 public class HGUCoursePatternAnalyzer {
 
 	private HashMap<String,Student> students;
@@ -53,10 +56,19 @@ public class HGUCoursePatternAnalyzer {
 	 * @return
 	 */
 	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
+		HashMap<String, Student> loadMap = new HashMap<String, Student>();
+		String[] studentnum;
 		
+		lines.get(1);
+		for(int i=1;i<lines.size();i++) {
+			studentnum = lines.get(i).trim().split(",");
+			loadMap.put(studentnum[0], new Student(studentnum[0]));
+			Course newRecord = new Course(lines.get(i));
+		
+			loadMap.get(studentnum[0]).addCourse(newRecord);
+		}
 		// TODO: Implement this method
-		
-		return null; // do not forget to return a proper variable.
+		return loadMap; // do not forget to return a proper variable.
 	}
 
 	/**
@@ -78,4 +90,5 @@ public class HGUCoursePatternAnalyzer {
 		
 		return null; // do not forget to return a proper variable.
 	}
+
 }
