@@ -2,7 +2,9 @@ package edu.handong.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +43,7 @@ public class HGUCoursePatternAnalyzer {
 		
 		// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
 		Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
-		
+
 		// Generate result lines to be saved.
 		ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
 		
@@ -58,14 +60,20 @@ public class HGUCoursePatternAnalyzer {
 	private HashMap<String,Student> loadStudentCourseRecords(ArrayList<String> lines) {
 		HashMap<String, Student> loadMap = new HashMap<String, Student>();
 		String[] studentnum;
-		
-		lines.get(1);
-		for(int i=1;i<lines.size();i++) {
-			studentnum = lines.get(i).trim().split(",");
-			loadMap.put(studentnum[0], new Student(studentnum[0]));
-			Course newRecord = new Course(lines.get(i));
-		
-			loadMap.get(studentnum[0]).addCourse(newRecord);
+		for(int i=0;i<lines.size();i++) {
+			studentnum = lines.get(i).split(",");
+			if(loadMap.containsKey(studentnum[0])) {
+				Course newRecord = new Course(lines.get(i));
+				loadMap.get(studentnum[0]).addCourse(newRecord);
+			}
+			else {
+				loadMap.put(studentnum[0], new Student(studentnum[0]));
+				Course newRecord = new Course(lines.get(i));
+				loadMap.get(studentnum[0]).addCourse(newRecord);
+			}
+			
+			//System.out.println(loadMap.get(studentnum[0]).a);
+			
 		}
 		// TODO: Implement this method
 		return loadMap; // do not forget to return a proper variable.
@@ -85,10 +93,30 @@ public class HGUCoursePatternAnalyzer {
 	 * @return
 	 */
 	private ArrayList<String> countNumberOfCoursesTakenInEachSemester(Map<String, Student> sortedStudents) {
-		
+		ArrayList<String> re = new ArrayList<String> ();
+		Set key = sortedStudents.keySet();
+		int i=0;
+		for (Iterator iterator = key.iterator(); iterator.hasNext();) {
+            String keyName = (String) iterator.next();
+            Map<String, Integer> sortedC = new TreeMap<String,Integer>(sortedStudents.get(keyName).getSemestersByYearAndSemester()); 
+			int s=sortedC.size();
+			String id = null;
+			int Cn = 0;
+			int k = 0;
+			id =sortedStudents.get(keyName).getCoursesTaken().get(0).getStudentId();
+			//
+			for(int t=1;t<s+1;t++) {
+				
+			Cn = sortedStudents.get(keyName).getNumCourseInNthSementer(t);
+			
+			k++;
+			String all = id+","+s+","+k+","+Cn;
+			re.add(all);
+			}
+		}
 		// TODO: Implement this method
 		
-		return null; // do not forget to return a proper variable.
+		return 	re; // do not forget to return a proper variable.
 	}
 
 }
