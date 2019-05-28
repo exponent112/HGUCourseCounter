@@ -10,8 +10,16 @@ public class Course {
 	private String firstMajor;
 	private String secondMajor;
 	private String courseCode;
+	public String getCourseCode() {
+		return courseCode;
+	}
+
 	private String courseName;
 
+
+	public String getCourseName() {
+		return courseName;
+	}
 
 	private String courseCredit;
 	private int yearTaken;
