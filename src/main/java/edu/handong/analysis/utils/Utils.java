@@ -24,6 +24,7 @@ import com.opencsv.CSVReader;
 
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
+import edu.handong.analysis.datamodel.TotalPrint;
 
 
 
@@ -55,7 +56,7 @@ public class Utils {
     			String temp = s[0]+", "+s[1]+", "+s[2]+", "+s[3]+", "+s[4]+", "+s[5]+", "
     					+s[6]+", "+s[7]+", "+s[8];
     			list.add(temp);
-    		       System.out.println(list.get(0));
+    		       //System.out.println(list.get(0));
     		}
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -67,12 +68,10 @@ public class Utils {
 	}//getLines
 	
 	//0001,14,1,9
-	public static void writeAFile(ArrayList<String> lines, String targetFileName, boolean aResult, Map<String,String> sortOptionC) {
+	public static void writeAFile(ArrayList<String> lines, String targetFileName, boolean aResult) {
 	//	String enc = new java.io.OutputStreamWriter(System.out).getEncoding();
 		String cc = targetFileName;
 		FileOutputStream outputStream = null;
-		
-		
 		if(aResult){
 			try {
 				outputStream = new FileOutputStream(cc);
@@ -104,56 +103,62 @@ public class Utils {
 				e.printStackTrace();
 			}//catch
 		}//if(a = 1)
-		else {
-			try {
-				Set key = sortOptionC.keySet();
-				outputStream = new FileOutputStream(cc);
-				BufferedWriter writer = new BufferedWriter(
-						new OutputStreamWriter(outputStream));
-				String[] out;
-				writer.write("Year");
+	}//write
+	
+	
+	public static void writeAFile( String targetFileName, boolean aResult, Map<String,TotalPrint> sortOptionC) {
+		String cc = targetFileName;
+		FileOutputStream outputStream = null;
+		try {
+			
+			Set key = sortOptionC.keySet();
+			outputStream = new FileOutputStream(cc);
+			BufferedWriter writer = new BufferedWriter(
+					new OutputStreamWriter(outputStream));
+			String[] out;
+			writer.write("Year");
+			writer.write(", ");
+			writer.write("Semester");
+			writer.write(", ");
+			writer.write("CouseCode");
+			writer.write(", ");
+			writer.write("CourseName");
+			writer.write(", ");
+			writer.write("TotalStudents");
+			writer.write(", ");
+			writer.write("StudentsTaken");
+			writer.write(", ");
+			writer.write("Rate");
+			writer.write("\n");
+			for (Iterator iterator = key.iterator(); iterator.hasNext();) {
+				String keyName = (String) iterator.next();
+				//System.out.println(Integer.toString(sortOptionC.get(keyName).getYear()));
+				writer.write(Integer.toString(sortOptionC.get(keyName).getYear()));
 				writer.write(", ");
-				writer.write("Semester");
+				writer.write(Integer.toString(sortOptionC.get(keyName).getSemester()));
 				writer.write(", ");
-				writer.write("CouseCode");
+				writer.write(sortOptionC.get(keyName).getCouseCode());
 				writer.write(", ");
-				writer.write("CourseName");
+				writer.write(sortOptionC.get(keyName).getCourseName());
 				writer.write(", ");
-				writer.write("TotalStudents");
+				writer.write(Integer.toString(sortOptionC.get(keyName).getTotalStudents()));
 				writer.write(", ");
-				writer.write("StudentsTaken");
+				writer.write(Integer.toString(sortOptionC.get(keyName).getStudentsTaken()));
 				writer.write(", ");
-				writer.write("Rate");
+				writer.write(String.format("%.2f", sortOptionC.get(keyName).getRate()*100)+"%");
 				writer.write("\n");
-				for (Iterator iterator = key.iterator(); iterator.hasNext();) {
-					String keyName = (String) iterator.next();
-					for(int i=0;i<lines.size();i++) {
-						String[] temp = sortOptionC.get(keyName).trim().split(",");
-						
-					
-					writer.write(temp[0]);
-					writer.write(", ");
-					writer.write(temp[1]);
-					writer.write(", ");
-					writer.write(temp[2]);
-					writer.write(", ");
-					writer.write(temp[3]);
-					writer.write(", ");
-					writer.write(temp[4]);
-					writer.write(", ");
-					writer.write(temp[5]);
-					writer.write(", ");
-					writer.write(temp[6]);
-					writer.write("\n");
-					
-				}
-				writer.flush();
-				writer.close();
+				
+			 }//for
+			writer.flush();
+			writer.close();
 			}catch (IOException e) {
 				e.printStackTrace();
 			}//catch//try
-		}//else (a = 2)
-	}//write
+			
+		
+	}//else (a = 2)
+	
+	}
 
-}
+
 

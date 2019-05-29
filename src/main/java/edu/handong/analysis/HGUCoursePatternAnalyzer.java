@@ -22,6 +22,7 @@ import org.apache.commons.cli.HelpFormatter;
 
 import edu.handong.analysis.datamodel.Course;
 import edu.handong.analysis.datamodel.Student;
+import edu.handong.analysis.datamodel.TotalPrint;
 import edu.handong.analysis.utils.NotEnoughArgumentException;
 import edu.handong.analysis.utils.Utils;
 
@@ -29,7 +30,7 @@ import edu.handong.analysis.utils.Utils;
 public class HGUCoursePatternAnalyzer {
 
 	private HashMap<String,Student> students;
-	HashMap<String,String> optionC;
+	HashMap<String, TotalPrint> optionC;
 	String dataPath;
 	String resultPath;
 	boolean help;
@@ -53,11 +54,6 @@ public class HGUCoursePatternAnalyzer {
 		ArrayList<String> lines = Utils.getLines(dataPath, true);
 		
 		students = loadStudentCourseRecords(lines);
-		
-		optionC = makeOptionC(students);
-		
-		Map<String, String> sortOptionC = new TreeMap<String, String>(optionC);
-		
 		// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
 		Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
 
@@ -65,8 +61,19 @@ public class HGUCoursePatternAnalyzer {
 		ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
 		
 		// Write a file (named like the value of resultPath) with linesTobeSaved.
-		
-		Utils.writeAFile(linesToBeSaved, resultPath, aResult,sortOptionC);
+		//System.out.println(isCode);
+		if(isCode){
+			//System.out.println("1");
+			optionC = makeOptionC(students);
+			//System.out.println("2");
+			Map<String, TotalPrint> sortOptionC = new TreeMap<String, TotalPrint>(optionC);
+			//System.out.println("3");
+			Utils.writeAFile(resultPath, aResult,sortOptionC);
+			//System.out.println("4");
+		}
+		else {
+			Utils.writeAFile(linesToBeSaved, resultPath, aResult);
+		}
 		
 		
 	}//run
@@ -97,8 +104,6 @@ public class HGUCoursePatternAnalyzer {
 				Course newRecord = new Course(lines.get(i));
 				loadMap.get(studentnum[0]).addCourse(newRecord);
 			}
-			
-			//System.out.println(loadMap.get(studentnum[0]).a);
 			
 		}
 		// TODO: Implement this method
@@ -144,76 +149,95 @@ public class HGUCoursePatternAnalyzer {
 		
 		return 	re; // do not forget to return a proper variable.
 	}//countNumberOfCoursesTakenInEachSemester
-	
-	private HashMap<String,String> makeOptionC (HashMap<String,Student> students){
-		HashMap<String, String> C = new HashMap<String,String>();
+
+	private HashMap<String,TotalPrint> makeOptionC (HashMap<String,Student> students){
+		HashMap<String, TotalPrint> C = new HashMap<String,TotalPrint>();
 		Set key = students.keySet();
 		for(Iterator iterator = key.iterator(); iterator.hasNext();) {
-			String keyName = (String) iterator.next();
-			for(int i=0;i<students.get(keyName).getCoursesTaken().size();i++) {
-				int totalP=0;
-				int StudentsTaken=1;
-			if(courseCode.equals(students.get(keyName).getCoursesTaken().get(i).getCourseCode())) {//courses와 같을 경우 
-				String YandS = "students.get(keyName).getCoursesTaken().get(i).getYearTaken()"
-						+ "students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken()";
-				if(C.containsKey(YandS)) {
-					//날짜별로 저장.
-					//totalP++;
-					StudentsTaken++;
-					String[] inital= new String[8];
-					inital[0] = String.valueOf(students.get(keyName).getCoursesTaken().get(i).getYearTaken());
-					inital[1] = String.valueOf(students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken());
-					inital[2] = students.get(keyName).getCoursesTaken().get(i).getCourseCode();
-					inital[3] = students.get(keyName).getCoursesTaken().get(i).getCourseName();
-					inital[4] = String.valueOf(0);//totalP
-					inital[5] = String.valueOf(StudentsTaken);
-					inital[6] = "";//rate
-					inital[7] = null;
-					String initial = inital[0]+","+inital[1]+","+inital[2]+","+inital[3]
-							+","+inital[4]+","+inital[5]+","+inital[6];
-					C.put(YandS,initial);
-					
-				}else {
-					String[] inital= new String[8];
-					inital[0] = String.valueOf(students.get(keyName).getCoursesTaken().get(i).getYearTaken());
-					inital[1] = String.valueOf(students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken());
-					inital[2] = students.get(keyName).getCoursesTaken().get(i).getCourseCode();
-					inital[3] = students.get(keyName).getCoursesTaken().get(i).getCourseName();
-					inital[4] = String.valueOf(0);//totalP
-					inital[5] = String.valueOf(StudentsTaken);
-					inital[6] = "";//rate
-					inital[7] = null;
-					String initial = inital[0]+","+inital[1]+","+inital[2]+","+inital[3]
-							+","+inital[4]+","+inital[5]+","+inital[6];
-					C.put(YandS,initial);
-					System.out.println(C.get(YandS));
-				}
-			}else continue; //만약 과목 코드가 같다면 저장 아니면 continue
-			}
-		}//for end
 			
-		for(Iterator iterator = key.iterator(); iterator.hasNext();) {
 			String keyName = (String) iterator.next();
+			
+			//System.out.println(keyName);
+			
 			for(int i=0;i<students.get(keyName).getCoursesTaken().size();i++) {
-				String YandS = "students.get(keyName).getCoursesTaken().get(i).getYearTaken()"
-						+ "students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken()";
-			//만약 key=년도+학기 -> ++;
-				if(YandS.equals(keyName)){
-					String[] out = C.get(keyName).trim().split(",");
-					int k = Integer.parseInt(out[4])+1;
-					int p = Integer.parseInt(out[5]);
-					out[4] = String.valueOf(k);
-					out[6] = String.format("%.2f",k/p);
-					String outY = out[0]+","+out[1]+","+out[2]+","+out[3]
-							+","+out[4]+","+out[5]+","+out[6];
-					C.put(YandS,outY);
-				}
-
-			}
-		}
+				String tempCourseName=students.get(keyName).getCoursesTaken().get(i).getCourseCode();
+				String YandS = Integer.toString(students.get(keyName).getCoursesTaken().get(i).getYearTaken())
+						+ Integer.toString(students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken());
+				//System.out.println("c="+courseCode.trim());
+				//System.out.println(tempCourseName);
+				String tempS = YandS+keyName;
+				if((courseCode.trim()).equals(tempCourseName.trim())) {
+					if(C.containsKey(YandS)) {
+						int temp = C.get(YandS).getStudentsTaken();
+						temp+=1;
+						C.get(YandS).setStudentsTaken(temp);
+						
+					}//if 추가 
+					else {
+						String[] tempString= new String[7];
+						tempString[0]=new String (String.valueOf(students.get(keyName).getCoursesTaken().get(i).getYearTaken()));
+						tempString[1]=new String (String.valueOf(students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken()));
+						tempString[2]=new String (students.get(keyName).getCoursesTaken().get(i).getCourseCode());
+						tempString[3]=new String (students.get(keyName).getCoursesTaken().get(i).getCourseName());
+						tempString[4]=new String (String.valueOf(0));//totalP
+						tempString[5]=new String (String.valueOf(1));
+						tempString[6]=new String ("");//rate
+						C.put(YandS, new TotalPrint(Integer.parseInt(tempString[0]),Integer.parseInt(tempString[1]),tempString[2],tempString[3]
+								,0,1,(float) 0.00));
+						//System.out.println(C.get(YandS).getCourseName());
+					}//if 저장 
+				}//if
+				else {
+					continue;
+				}//else
+			
+			}//for
+		}//for
+		ArrayList<String> ID = new ArrayList<String>();
 		
+		
+		for(Iterator iterator = key.iterator(); iterator.hasNext();) {
+			
+			String keyName = (String) iterator.next();
+			
+			//System.out.println(keyName);
+			
+			for(int i=0;i<students.get(keyName).getCoursesTaken().size();i++) {
+				String YandS = Integer.toString(students.get(keyName).getCoursesTaken().get(i).getYearTaken())
+						+ Integer.toString(students.get(keyName).getCoursesTaken().get(i).getSemesterCourseTaken());
+				//System.out.println("aaa"+YandS);
+				String tempS = YandS+keyName;
+				
+				if(C.containsKey(YandS)) {
+					
+					if(ID.contains(tempS)  ) {
+						//System.out.println("arleady contain's");
+						continue;
+					}
+					else {
+						int temp = C.get(YandS).getTotalStudents();
+						temp+=1;
+						int s = C.get(YandS).getStudentsTaken();
+						C.get(YandS).setTotalStudents(temp);
+						
+						//System.out.println(temp);
+						
+						C.get(YandS).setRate((float)s/temp);
+						
+						
+						ID.add(tempS);
+					}
+				}
+				else {
+					continue;
+				}
+			}
+			
+		}
+		System.out.println(C.get("20031").getTotalStudents());
 		return C;
 	}//makeOptionC
+
 	
 	
 	
@@ -306,13 +330,17 @@ public class HGUCoursePatternAnalyzer {
 
 		if(parseOptions(options, args)){
 			this.startInt = Integer.parseInt(this.startYear);
+			//System.out.println(startYear+startInt);
+			
 			this.endInt = Integer.parseInt(this.endYear);
+			//System.out.println(endYear+endInt);
 			if (help){
 				printHelp(options);
 				return;
 			}//if(help)
 			if(analysis.equals("-1")) {
 				aResult=true;
+				isCode = false;
 			}
 			else if(analysis.equals("-2")) {
 				aResult=false;
