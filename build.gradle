@@ -39,3 +39,12 @@ dependencies {
 	
     
 }
+
+apply plugin: 'java'
+ 
+task diskZip(type: Zip) {
+    from 'src/dist'
+    into('libs') { // 압축 파일 안의 libs/ 디렉토리로 파일 넣음
+        from configurations.runtime
+    }
+}

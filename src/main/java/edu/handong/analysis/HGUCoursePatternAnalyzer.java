@@ -50,29 +50,36 @@ public class HGUCoursePatternAnalyzer {
 	public void run(String[] args) {
 		
 		optionRun(args);
-
-		ArrayList<String> lines = Utils.getLines(dataPath, true);
 		
-		students = loadStudentCourseRecords(lines);
-		// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
-		Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
-
-		// Generate result lines to be saved.
-		ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
-		
-		// Write a file (named like the value of resultPath) with linesTobeSaved.
-		//System.out.println(isCode);
-		if(isCode){
-			//System.out.println("1");
-			optionC = makeOptionC(students);
-			//System.out.println("2");
-			Map<String, TotalPrint> sortOptionC = new TreeMap<String, TotalPrint>(optionC);
-			//System.out.println("3");
-			Utils.writeAFile(resultPath, aResult,sortOptionC);
-			//System.out.println("4");
+		if (help) {
+			System.exit(0);
+			return;
 		}
 		else {
-			Utils.writeAFile(linesToBeSaved, resultPath, aResult);
+			
+			ArrayList<String> lines = Utils.getLines(dataPath, true);
+			
+			students = loadStudentCourseRecords(lines);
+			// To sort HashMap entries by key values so that we can save the results by student ids in ascending order.
+			Map<String, Student> sortedStudents = new TreeMap<String,Student>(students); 
+	
+			// Generate result lines to be saved.
+			ArrayList<String> linesToBeSaved = countNumberOfCoursesTakenInEachSemester(sortedStudents);
+			
+			// Write a file (named like the value of resultPath) with linesTobeSaved.
+			//System.out.println(isCode);
+			if(isCode){
+				//System.out.println("1");
+				optionC = makeOptionC(students);
+				//System.out.println("2");
+				Map<String, TotalPrint> sortOptionC = new TreeMap<String, TotalPrint>(optionC);
+				//System.out.println("3");
+				Utils.writeAFile(resultPath, aResult,sortOptionC);
+				//System.out.println("4");
+			}
+			else {
+				Utils.writeAFile(linesToBeSaved, resultPath, aResult);
+			}
 		}
 		
 		
@@ -234,7 +241,7 @@ public class HGUCoursePatternAnalyzer {
 			}
 			
 		}
-		System.out.println(C.get("20031").getTotalStudents());
+		//System.out.println(C.get("20031").getTotalStudents());
 		return C;
 	}//makeOptionC
 
@@ -299,6 +306,7 @@ public class HGUCoursePatternAnalyzer {
 		try {
 
 			CommandLine cmd = parser.parse(options, args);
+			
 			this.dataPath = cmd.getOptionValue("i");
 			this.help = cmd.hasOption("h");
 			this.resultPath = cmd.getOptionValue("o");
@@ -336,6 +344,7 @@ public class HGUCoursePatternAnalyzer {
 			//System.out.println(endYear+endInt);
 			if (help){
 				printHelp(options);
+				System.exit(0);
 				return;
 			}//if(help)
 			if(analysis.equals("-1")) {

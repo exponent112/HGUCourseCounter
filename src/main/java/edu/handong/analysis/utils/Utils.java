@@ -37,8 +37,23 @@ public class Utils {
 		ArrayList<String> list = new ArrayList<String>();
         try {
         	
+        	File f = new File(file);
+
+    	    // 파일 존재 여부 판단
+    	    if (!f.isFile()) {
+    	      //System.out.println("OK 파일 있습니다.");
+    	    	try {
+    				throw new NotEnoughArgumentException();
+    			} catch (NotEnoughArgumentException e) {
+    				// TODO Auto-generated catch block
+    				System.out.println(e.getMessage());
+    				System.exit(0);
+    			}
+    	    }
+
         	
 			CSVReader reader = new CSVReader(new FileReader(file));
+        	
         	//CSVReader reader = new CSVReader(new InputStreamReader(new FileInputStream("hw5data.csv"), "UTF-8"));
         	
         	// UTF-8
