@@ -49,13 +49,41 @@ public class HGUCoursePatternAnalyzer {
 	 */
 	public void run(String[] args) {
 		
-		optionRun(args);
+
+		Options options = createOptions();
+
+		if(parseOptions(options, args)){
+			if (help){
+				printHelp(options);
+				return;
+			}//if(help)
+			else{this.startInt = Integer.parseInt(this.startYear);
+			//System.out.println(startYear+startInt);
+			
+			this.endInt = Integer.parseInt(this.endYear);
+			//System.out.println(endYear+endInt);
+			
+			if(analysis.equals("1")) {
+				aResult=true;
+				isCode = false;
+			}
+			else if(analysis.equals("2")) {
+				aResult=false;
+				if(!isCode) {
+					printHelp(options);
+					return;
+				}
+			}
+			else {
+				printHelp(options);
+				return;
+			}
+			}
+    	
+
 		
-		if (help) {
-			System.exit(0);
-			return;
-		}
-		else {
+		
+		
 			
 			ArrayList<String> lines = Utils.getLines(dataPath, true);
 			
@@ -80,8 +108,8 @@ public class HGUCoursePatternAnalyzer {
 			else {
 				Utils.writeAFile(linesToBeSaved, resultPath, aResult);
 			}
-		}
 		
+		}
 		
 	}//run
 	
@@ -332,36 +360,6 @@ public class HGUCoursePatternAnalyzer {
 		formatter.printHelp("HGUCourseCounter", header, options, footer, true);
 	}//printHelp
 	
-	private void optionRun(String[] args) {
+	
 
-		Options options = createOptions();
-
-		if(parseOptions(options, args)){
-			this.startInt = Integer.parseInt(this.startYear);
-			//System.out.println(startYear+startInt);
-			
-			this.endInt = Integer.parseInt(this.endYear);
-			//System.out.println(endYear+endInt);
-			if (help){
-				printHelp(options);
-				System.exit(0);
-				return;
-			}//if(help)
-			if(analysis.equals("-1")) {
-				aResult=true;
-				isCode = false;
-			}
-			else if(analysis.equals("-2")) {
-				aResult=false;
-				if(!isCode) {
-					printHelp(options);
-					return;
-				}
-			}
-			else {
-				printHelp(options);
-				return;
-			}
-    	}//if(parseOption)
-	}//optionRun
 }//HGUCoursePatternAnalyzer
